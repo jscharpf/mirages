@@ -40,7 +40,10 @@
       <p>Instead, the response may be based on the text of the question, on regularities in the training data, or on other unsupported model priors.</p>
       <p>The key issue is not simply whether the answer is correct or incorrect, but whether the model confidently asserts something that is not grounded in the visual evidence.</p>
       <figure class="post-figure">
-        <img src="stop.png" alt="Illustration of a VLM mirage: confident answer without visual support">
+        <picture>
+          <source srcset="stop.webp" type="image/webp">
+          <img src="stop.png" alt="Illustration of a VLM mirage: confident answer without visual support" width="1440" height="810" decoding="async">
+        </picture>
         <figcaption>A mirage occurs when a VLM gives a confident answer that is not supported by the visual evidence.</figcaption>
       </figure>
     </section>
@@ -73,7 +76,10 @@
       <p>In other words, is this image unrelated, noisy, or blank? In such cases, the safest course of action would be for the model to refuse to answer rather than hallucinate a fluent but unsupported response [Detect Before You Leap, arXiv 2026].</p>
       <p>At the most basic level, this can be achieved by using heuristics to detect uninformative images: applying deterministic statistics over pixels to identify low-contrast, unusually uniform, patchy, or noisy images as unsupported [Detect Before You Leap, arXiv 2026].</p>
       <figure class="post-figure post-figure--medium">
-        <img src="stat.png" alt="Pixel-level statistics for detecting uninformative images">
+        <picture>
+          <source srcset="stat.webp" type="image/webp">
+          <img src="stat.png" alt="Pixel-level statistics for detecting uninformative images" width="1000" height="1249" loading="lazy" decoding="async">
+        </picture>
         <figcaption>Simple pixel-level statistics can help flag blank, noisy, or non-informative images before a VLM produces an answer.</figcaption>
       </figure>
       <p>Beyond these simple image-level heuristics, can we determine whether the image is actually related to the question?</p>
@@ -83,7 +89,10 @@
       <p>The intuition is that if the image actually contains evidence for the question, patches containing relevant visual content should become more aligned, in embedding space, with the question in later vision layers.</p>
       <p>Ultimately, if the image is unrelated to the question, image patches should generally show lower, flatter, or less stable alignment across vision layers [Detect Before You Leap, arXiv 2026].</p>
       <figure class="post-figure post-figure--medium">
-        <img src="layer.png" alt="Layer-wise patch-text alignment across vision encoder layers">
+        <picture>
+          <source srcset="layer.webp" type="image/webp">
+          <img src="layer.png" alt="Layer-wise patch-text alignment across vision encoder layers" width="1000" height="1249" loading="lazy" decoding="async">
+        </picture>
         <figcaption>Conceptual illustration inspired by TC-LIA. The curves are illustrative and intended to show the intuition behind layer-wise patch-text alignment.</figcaption>
       </figure>
     </section>

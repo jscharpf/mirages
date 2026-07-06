@@ -171,7 +171,13 @@ a:hover {
   border-radius: 8px;
   display: block;
   height: auto;
+  opacity: 0;
+  transition: opacity 0.5s ease;
   width: 100%;
+}
+
+.post-figure img.is-loaded {
+  opacity: 1;
 }
 
 .post-figure figcaption {
