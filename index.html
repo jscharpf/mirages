@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Can VLMs Tell When They Shouldn't Answer? — overshoot</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="site-header__logo" href="https://overshoot.ai">
+      <img src="overshoot_logo.png" alt="overshoot">
+    </a>
+    <nav class="site-header__nav">
+      <a href="https://overshoot.ai">Platform</a>
+      <a href="https://docs.overshoot.ai">Documentation</a>
+      <a href="#">Blog</a>
+    </nav>
+    <div class="site-header__spacer"></div>
+  </header>
+
+  <main class="article">
+    <a class="back-link" href="#">&larr; Back to all posts</a>
+
+    <h1>Can VLMs Tell When They Shouldn't Answer?</h1>
+
+    <div class="meta">
+      <span>Joseph Scharpf</span>
+      <span>July 6, 2026</span>
+    </div>
+
+    <section class="post-section">
+      <h2>What are Mirages?</h2>
+      <div class="section-divider"></div>
+      <p>Vision-language models (VLMs) are able to answer questions about images and videos: given an image as input, you can ask a question and expect the model to formulate a fluent, confident response.</p>
+      <p>However, recent research has uncovered a surprising failure mode of vision-language models: they can answer questions about visual content even when the relevant visual evidence is blank, unrelated, or uninformative.</p>
+      <p>These responses have been dubbed &ldquo;mirages&rdquo;: predictions that reflect an appearance of understanding visual evidence that is not actually present [Mirage, arXiv 2026].</p>
+      <p>A mirage happens when a vision-language model displays an apparent understanding of what is shown in an image, but the response is not actually supported by the image.</p>
+      <p>Instead, the response may be based on the text of the question, on regularities in the training data, or on other unsupported model priors.</p>
+      <p>The key issue is not simply whether the answer is correct or incorrect, but whether the model confidently asserts something that is not grounded in the visual evidence.</p>
+      <figure class="post-figure">
+        <img src="stop.png" alt="Illustration of a VLM mirage: confident answer without visual support">
+        <figcaption>A mirage occurs when a VLM gives a confident answer that is not supported by the visual evidence.</figcaption>
+      </figure>
+    </section>
+
+    <section class="post-section">
+      <h2>How do mirages happen?</h2>
+      <div class="section-divider"></div>
+      <p>While the exact mechanisms underlying mirages are not entirely understood, researchers have hypothesized, and provided evidence for, two possible ways in which mirages can be generated: textual bias, where the model relies on question text rather than image content, and spurious visual representations, where the model &ldquo;hallucinates&rdquo; the presence of visual evidence related to the question [Mirage Probes, arXiv 2026].</p>
+      <p>The former source of error is fairly intuitive: the model answers the question based on the text in the prompt, either implicitly suggested by the prompt itself or learned as a regularity during training, rather than based on the image.</p>
+      <p>The second source is more interesting: the model acts as if there were visual evidence supporting the answer, when in reality there is none.</p>
+      <p>This has been described as a spurious image, not referring to an actual generated image, but rather to a hypothesized internal representation that would support the answer if it were grounded in real visual evidence.</p>
+      <p>Basically, the model is responding as if there were an image that contains evidence for the answer, when there is not [Mirage Probes, arXiv 2026].</p>
+    </section>
+
+    <section class="post-section">
+      <h2>Why is this a problem?</h2>
+      <div class="section-divider"></div>
+      <p>Mirages are a problem both from the practical standpoint of deploying vision-language models and from the theoretical standpoint of assessing their ability.</p>
+      <p>Starting with the practical one: a vision-language model that is able to formulate fluent, confident responses that are visually unsupported can be dangerous in high-stakes settings.</p>
+      <p>When applied to medical, robotic, industrial, surveillance, insurance, or video-understanding settings where it must reason about images, a VLM must be able to distinguish between what it knows from the visual evidence and what it is inferring from text regularities. This distinction is especially important for safety-critical applications where the cost of hallucination is prohibitively high.</p>
+      <p>Meanwhile, the other aspect of mirages is connected to the theoretical assessment of a vision-language model&rsquo;s proficiency.</p>
+      <p>If a given model is able to answer visual questions correctly on a benchmark, but some of these questions can be partially answered from text alone, it becomes challenging to determine what exactly the model is good at: processing visual concepts, or simply exploiting textual regularities in captions and questions.</p>
+      <p>In other words, many vision-language tasks have the property that the language part of the model can help it answer questions even when the visual input is unrelated.</p>
+    </section>
+
+    <section class="post-section">
+      <h2>Can models know when they should not answer?</h2>
+      <div class="section-divider"></div>
+      <p>The question of mirage detection is framed as one of determining whether a given image-question pair is answerable at all.</p>
+      <p>In other words, is this image unrelated, noisy, or blank? In such cases, the safest course of action would be for the model to refuse to answer rather than hallucinate a fluent but unsupported response [Detect Before You Leap, arXiv 2026].</p>
+      <p>At the most basic level, this can be achieved by using heuristics to detect uninformative images: applying deterministic statistics over pixels to identify low-contrast, unusually uniform, patchy, or noisy images as unsupported [Detect Before You Leap, arXiv 2026].</p>
+      <figure class="post-figure post-figure--medium">
+        <img src="stat.png" alt="Pixel-level statistics for detecting uninformative images">
+        <figcaption>Simple pixel-level statistics can help flag blank, noisy, or non-informative images before a VLM produces an answer.</figcaption>
+      </figure>
+      <p>Beyond these simple image-level heuristics, can we determine whether the image is actually related to the question?</p>
+      <p>The key lies in analyzing how much the visual content actually supports the question.</p>
+      <p>A typical way to assess the relevance of an image to a question is to use a CLIP-style score: comparing the embedding of the question to the embedding of the image and measuring how close they are in a shared embedding space.</p>
+      <p>However, rather than comparing the whole image to the question, we can compare patches of the image to the question across the layers of a vision encoder.</p>
+      <p>The intuition is that if the image actually contains evidence for the question, patches containing relevant visual content should become more aligned, in embedding space, with the question in later vision layers.</p>
+      <p>Ultimately, if the image is unrelated to the question, image patches should generally show lower, flatter, or less stable alignment across vision layers [Detect Before You Leap, arXiv 2026].</p>
+      <figure class="post-figure post-figure--medium">
+        <img src="layer.png" alt="Layer-wise patch-text alignment across vision encoder layers">
+        <figcaption>Conceptual illustration inspired by TC-LIA. The curves are illustrative and intended to show the intuition behind layer-wise patch-text alignment.</figcaption>
+      </figure>
+    </section>
+
+    <section class="post-section">
+      <h2>Can this evidence checking decrease mirages?</h2>
+      <div class="section-divider"></div>
+      <p>These types of evidence-alignment checks can turn out to be surprisingly useful: in one practical example, given unrelated or non-informative input, baseline vision-language models produced mirages between 21.7% and 66.6% of the time, depending on the model backbone.</p>
+      <p>Meanwhile, after applying a detection pipeline consisting of blank/noise detection, image-question alignment checks, vision-language model self-assessment, and ensemble-based feature fusion, the reported mirage rate ranged between 2.7% and 3.3% across twelve model backbones [Detect Before You Leap, arXiv 2026].</p>
+      <p>However, this is not a complete solution: image-question alignment checks were overall better at detecting cross-domain mismatches than same-domain mismatches.</p>
+      <p>A natural image paired with a medical question was much easier to detect as a mismatch than the wrong chest X-ray paired with a chest X-ray question, despite the domain of the image matching the domain of the question.</p>
+      <p>Thus, such mismatches can be much harder to detect because images from the same domain may share high-level visual structure, even if they lack the specific evidence needed to answer the question.</p>
+      <p>These checks should be seen as an important addition to a vision-language model&rsquo;s reasoning pipeline: while an image passing them is not proof of being grounded, it does suggest that the image is not blatantly unrelated to the question.</p>
+    </section>
+
+    <section class="post-section">
+      <h2>The next frontier in vision-language learning: visual grounding checks for mirages</h2>
+      <div class="section-divider"></div>
+      <p>The takeaway is that VLMs should not only make valid claims about image content, but also ground those claims in perceptual evidence.</p>
+      <p>Mirages reveal a failure mode in which VLMs can confidently act as visual reasoners while relying on superficial textual regularities or unsupported internal visual representations. This can lead them to draw conclusions with little grounding in actual perceptual content. Consequently, this undermines their practical utility in tasks requiring visual reasoning while also artificially inflating their theoretical competence. The challenge, therefore, is to equip VLMs with perceptual guardrails so that they can better determine when their verbal responses are actually supported by visual evidence.</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
