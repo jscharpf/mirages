@@ -41,10 +41,10 @@
       <p>The key issue is not simply whether the answer is correct or incorrect, but whether the model confidently asserts something that is not grounded in the visual evidence.</p>
       <figure class="post-figure">
         <picture>
-          <source srcset="stop.webp" type="image/webp">
-          <img src="stop.png" alt="Illustration of a VLM mirage: confident answer without visual support" width="1440" height="810" decoding="async">
+          <source srcset="bot.webp" type="image/webp">
+          <img src="bot.png" alt="Mirage behavior: confident VLM answer without supporting image evidence" width="1440" height="639" decoding="async">
         </picture>
-        <figcaption>A mirage occurs when a VLM gives a confident answer that is not supported by the visual evidence.</figcaption>
+        <figcaption>Mirage behavior: a VLM gives a confident visual answer without supporting image evidence. Source: Mirage, arXiv 2026.</figcaption>
       </figure>
     </section>
 
@@ -78,9 +78,9 @@
       <figure class="post-figure post-figure--medium">
         <picture>
           <source srcset="stat.webp" type="image/webp">
-          <img src="stat.png" alt="Pixel-level statistics for detecting uninformative images" width="1000" height="1249" loading="lazy" decoding="async">
+          <img src="stat.png" alt="Patch variance for detecting blank or unusually uniform images" width="2170" height="725" loading="lazy" decoding="async">
         </picture>
-        <figcaption>Simple pixel-level statistics can help flag blank, noisy, or non-informative images before a VLM produces an answer.</figcaption>
+        <figcaption>Patch variance compares how much image patches vary across the input, helping flag blank or unusually uniform images before a VLM answers.</figcaption>
       </figure>
       <p>Beyond these simple image-level heuristics, can we determine whether the image is actually related to the question?</p>
       <p>The key lies in analyzing how much the visual content actually supports the question.</p>
