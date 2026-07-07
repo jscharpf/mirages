@@ -66,8 +66,15 @@ a:hover {
   font-weight: 400;
 }
 
-.site-header__spacer {
+.site-header__yc {
   justify-self: end;
+  line-height: 0;
+}
+
+.site-header__yc img {
+  display: block;
+  height: 48px;
+  width: auto;
 }
 
 /* --- Article --- */
@@ -196,6 +203,7 @@ a:hover {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
     padding: 18px 20px 16px;
+    position: relative;
   }
 
   .site-header__logo {
@@ -217,8 +225,14 @@ a:hover {
     font-size: 13px;
   }
 
-  .site-header__spacer {
-    display: none;
+  .site-header__yc {
+    position: absolute;
+    right: 20px;
+    top: 18px;
+  }
+
+  .site-header__yc img {
+    height: 38px;
   }
 
   .article {
